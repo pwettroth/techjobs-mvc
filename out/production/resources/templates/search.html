@@ -1,51 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org/">
+<html xmlns:th="http://www.thymeleaf.org/" xmlns="http://www.w3.org/1999/html">
 <head th:replace="fragments :: head">
 </head>
 <body>
 
-<div th:replace="fragments :: page-header"></div>
+    <div th:replace="fragments :: page-header"></div>
+    <div class="container body-content">
 
-<div class="container body-content">
+        <h1 th:text="${#strings.capitalizeWords(title)}"></h1>
 
-    <h1 th:text="${#strings.capitalizeWords(title)}"></h1>
+        <form th:action="@{/search/results}">
+            <h2>Search by:</h2>
 
-    <form th:action="@{/search/results}">
-        <h2>Search by:</h2>
+            <p>
+                <span th:each="column : ${columns}">
+                    <input
+                            type="radio"
+                            name="searchType"
+                            th:id="${column.key}"
+                            th:value="${column.key}"
+                            th:checked="${column.key == 'all'}"/>
+                    <label th:for="${column.key}" th:text="${column.value}"></label>
+                </span>
 
-        <p>
-            <span th:each="column : ${columns}">
-                <input
-                        type="radio"
-                        name="searchType"
-                        th:id="${column.key}"
-                        th:value="${column.key}"
-                        th:checked="${column.key == 'all'}"/>
-                <label th:for="${column.key}" th:text="${column.value}"></label>
-            </span>
+            </p>
 
-        </p>
+            <p>
+                <label for="searchTerm">Keyword:</label>
+                <input type="text" name="searchTerm" id="searchTerm" />
+            </p>
 
-        <p>
-            <label for="searchTerm">Keyword:</label>
-            <input type="text" name="searchTerm" id="searchTerm" />
-        </p>
+            <input type="submit" value="Search" />
 
-        <input type="submit" value="Search" />
-    </form>
+        </form>
 
-    <hr />
+        <hr />
 
-    <!-- TODO #2 - Loop over jobs map to display all job fields -->
+        <!-- TODO #2 - Loop over jobs map to display all job fields -->
+        <div>
+            <h3 th:if="${jobs != null}" th:text="${jobs.size() + ' Result(s)'}"></h3>
+            <table th:fragment = "jobs-table" class="job-listing" th:each="job : ${jobs}">
 
-    <table th:fragment = "jobs-table" class="job-listing" th:each="job : ${jobs}">
-        <tr th:each="entry : ${job.entrySet()}">
-            <td th:text="${#strings.capitalizeWords(entry.getKey())}"></td>
-            <td th:text="${#strings.capitalizeWords(entry.getValue())}"></td>
-        </tr>
-    </table>
+                <tr th:each="entry : ${job.entrySet()}">
+                    <td th:text="${#strings.capitalizeWords(entry.getKey())}"></td>
+                    <td th:text="${#strings.capitalizeWords(entry.getValue())}"></td>
+                </tr>
+            </table>
 
-</div>
-
+        </div>
+    </div>
 </body>
 </html>
